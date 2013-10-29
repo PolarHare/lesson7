@@ -22,6 +22,7 @@ public class RSSHandler extends DefaultHandler {
     private static final String RSS_TAG = "rss";
     private static final String FEED_TAG = "channel";
     private static final DateFormat dateFormat = new SimpleDateFormat("E, d MMM y HH:mm:ss Z", Locale.ENGLISH);
+    private static final DateFormat dateFormat2 = new SimpleDateFormat("d MMM y HH:mm:ss Z", Locale.ENGLISH);
 
     private Stack<String> stack;
     private Stack<State> stateStack;
@@ -69,7 +70,11 @@ public class RSSHandler extends DefaultHandler {
         try {
             return dateFormat.parse(date);
         } catch (ParseException e) {
-            throw new SAXException("Date format is incorrect!", e);
+            try {
+                return dateFormat2.parse(date);
+            } catch (ParseException e2) {
+                throw new SAXException("Date format is incorrect!", e2);
+            }
         }
     }
 

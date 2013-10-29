@@ -6,7 +6,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.polarnick.rss.Feed;
 
 import java.util.ArrayList;
@@ -54,7 +57,12 @@ public class FeedsManagmentActivity extends ListActivity {
                             dialogUrl.setView(input);
                             dialogUrl.setPositiveButton(getResources().getString(R.string.ALERT_OK), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    newFeed.setUrl(((TextView) input).getText().toString());
+                                    String url = ((TextView) input).getText().toString();
+                                    String httpPrefix = "http://";
+                                    if (!url.startsWith(httpPrefix)) {
+                                        url = httpPrefix + url;
+                                    }
+                                    newFeed.setUrl(url);
                                     if (newFeed.getUrl().length() == 0) {
                                         Toast toast = Toast.makeText(FeedsManagmentActivity.this,
                                                 getResources().getString(R.string.FEED_URL_MUST_NOY_BE_EMPTY), Toast.LENGTH_LONG);
