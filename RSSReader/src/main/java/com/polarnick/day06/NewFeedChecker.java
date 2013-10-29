@@ -65,6 +65,7 @@ public class NewFeedChecker extends IntentService {
                 HttpEntity httpEntity = httpResponse.getEntity();
 
                 String xml = EntityUtils.toString(httpEntity, "UTF-8");
+                httpEntity.consumeContent();
                 InputSource is = new InputSource(new StringReader(xml));
                 RSSHandler handler = new RSSHandler();
                 parser.parse(is, handler);
