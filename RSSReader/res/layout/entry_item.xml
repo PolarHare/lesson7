@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+            android:id="@+id/entryRankAndDate"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/separator"
+            android:layout_alignParentLeft="true">
+        <TextView
+                android:id="@+id/entryDateUpdated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22:30"
+                android:textStyle="bold"/>
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/entryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello, good person! The world is good, the weather is fine! Java is great, Android is acceptable."
+            android:layout_toRightOf="@id/entryRankAndDate"
+            android:textSize="@dimen/titlesTextSize" android:layout_marginLeft="6dp"/>
+</RelativeLayout>

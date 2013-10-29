@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ENTRY_PUBLISHED">Entry published:</string>
+    <string name="LOADING_FEED">Loading Feed...</string>
+    <string name="ALERT_OK">OK</string>
+    <string name="ALERT_FEED_UPDATE">Feed was updated!</string>
+    <string name="MANAGE_FEEDS">Manage feeds</string>
+    <string name="ADD_FEED">Add feed</string>
+    <string name="THERE_ARE_NO_DEFAULT_FEED">There are no default feed!</string>
+    <string name="DELETE_FEED">Delete</string>
+    <string name="SET_FEED_DEFAULT">Set default</string>
+    <string name="ENTER_FEED_NAME">Enter feed name:</string>
+    <string name="FEED_NAME_MUST_NOY_BE_EMPTY">Feed name must not be empty!</string>
+    <string name="ENTER_FEED_URL">Enter feed url:</string>
+    <string name="FEED_URL_MUST_NOY_BE_EMPTY">Feed URL must not be empty!</string>
+    <string name="CHECKING_FEED">Checking feed...</string>
+    <string name="THIS_FEED_IS_NOT_SUPPORTED">This feed is not supported!</string>
+    <string name="MUST_NOT_BE_A_FEED_NAME">must not be a feed name!</string>
+</resources>

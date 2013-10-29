@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+            android:id="@+id/entryDate"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+        <TextView
+                android:id="@+id/entryDateUpdatedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ENTRY_PUBLISHED"/>
+        <TextView
+                android:id="@+id/entryDateValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="14:09"
+                android:textSize="@dimen/titlesTextSize"
+                android:textStyle="bold"/>
+    </LinearLayout>
+
+
+    <TextView
+            android:id="@+id/linkToPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:layout_marginTop="4dp"
+            android:text="Open in browser"
+            android:gravity="right"/>
+
+    <LinearLayout
+            android:id="@+id/entryTitleList"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/entryDate"
+            android:gravity="center">
+        <TextView
+                android:id="@+id/entryTitleLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textStyle="bold"/>
+        <TextView
+                android:id="@+id/entryTitleValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Злодея из «Аватара» воскресят"
+                android:textSize="@dimen/titlesTextSize"
+                android:textStyle="bold"/>
+    </LinearLayout>
+
+    <WebView
+            android:id="@+id/entryDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/background_dark"/>
+</LinearLayout>
