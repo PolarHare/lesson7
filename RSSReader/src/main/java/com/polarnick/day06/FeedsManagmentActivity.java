@@ -1,14 +1,12 @@
 package com.polarnick.day06;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.*;
 import com.polarnick.rss.Feed;
 
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author Nickolay Polyarniy aka PolarNick
  */
-public class FeedsManagmentActivity extends ListActivity {
+public class FeedsManagmentActivity extends Activity {
 
     private FeedsSQLiteOpenHelper sqlHelper;
     private FeedsAdapter adapter;
@@ -39,7 +37,66 @@ public class FeedsManagmentActivity extends ListActivity {
         sqlHelper = FeedsSQLiteOpenHelper.getInstance(this);
         feeds = new ArrayList<FeedsSQLiteOpenHelper.FeedEntry>(sqlHelper.getEntries().values());
         adapter = new FeedsAdapter(this, feeds);
-        setListAdapter(adapter);
+        ListView list = (ListView) findViewById(R.id.feedsList);
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FeedsSQLiteOpenHelper.FeedEntry feed = feeds.get(position);
+                askUserToEditFeedName(feed, feed.getName(), null);
+            }
+        });
+    }
+
+    /**
+     * @param reason can be null or empty
+     */
+    private void askUserToEditFeedName(final FeedsSQLiteOpenHelper.FeedEntry oldFeed, String oldName, String reason) {
+        AlertDialog.Builder editFeedName = new AlertDialog.Builder(this);
+        if (reason != null && !reason.isEmpty()) {
+            editFeedName.setMessage(reason + "\n" + getResources().getString(R.string.EDIT_FEED_NAME));
+        } else {
+            editFeedName.setMessage(getResources().getString(R.string.EDIT_FEED_NAME));
+        }
+        final EditText input = new EditText(this);
+        input.setText(oldName);
+        editFeedName.setView(input);
+        editFeedName.setPositiveButton(getResources().getString(R.string.ALERT_OK), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String newName = ((TextView) input).getText().toString();
+                if (newName.length() == 0) {
+                    askUserToEditFeedName(oldFeed, newName, getResources().getString(R.string.FEED_NAME_MUST_NOY_BE_EMPTY));
+                } else if (newName.equals(getResources().getString(R.string.MANAGE_FEEDS))) {
+                    askUserToEditFeedName(oldFeed, newName, "\"" + getResources().getString(R.string.MANAGE_FEEDS) + "\" "
+                            + getResources().getString(R.string.MUST_NOT_BE_A_FEED_NAME));
+                } else {
+                    for (FeedsSQLiteOpenHelper.FeedEntry feed : feeds) {
+                        if (feed.getName().equals(newName) && feed != oldFeed) {
+                            askUserToEditFeedName(feed, newName, getResources().getString(R.string.FEED_NAME_ALREADY_USED));
+                            return;
+                        }
+                    }
+
+                    FeedsSQLiteOpenHelper.FeedEntry newDefault = sqlHelper.deleteEntry(oldFeed);
+                    if (newDefault != null) {
+                        for (FeedsSQLiteOpenHelper.FeedEntry feed : feeds) {
+                            if (feed.getName().equals(newDefault.getName())) {
+                                feed.setDefault(true);
+                            }
+                        }
+                    }
+                    oldFeed.setName(newName);
+                    sqlHelper.insertEntry(oldFeed);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        editFeedName.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        editFeedName.show();
     }
 
     /**
@@ -69,7 +126,7 @@ public class FeedsManagmentActivity extends ListActivity {
                 }
                 newFeed.setUrl(url);
                 if (newFeed.getUrl().isEmpty()) {
-                    askUserForFeedURLAndSoOn(newFeed, getResources().getString(R.string.FEED_URL_MUST_NOY_BE_EMPTY));
+                    askUserForFeedURLAndSoOn(newFeed, getResources().getString(R.string.FEED_URL_MUST_NOT_BE_EMPTY));
                 } else {
                     checkURLAndSoOn(newFeed);
                 }
@@ -137,6 +194,9 @@ public class FeedsManagmentActivity extends ListActivity {
                         }
                     }
                     sqlHelper.insertEntry(newFeed);
+                    if (feeds.size() == 0) {
+                        newFeed.setDefault(true);
+                    }
                     feeds.add(newFeed);
                     adapter.notifyDataSetChanged();
                 }
