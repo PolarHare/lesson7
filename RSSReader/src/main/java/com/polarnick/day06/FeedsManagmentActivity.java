@@ -35,7 +35,7 @@ public class FeedsManagmentActivity extends Activity {
             }
         });
         sqlHelper = FeedsSQLiteOpenHelper.getInstance(this);
-        feeds = new ArrayList<FeedsSQLiteOpenHelper.FeedEntry>(sqlHelper.getEntries().values());
+        feeds = new ArrayList<FeedsSQLiteOpenHelper.FeedEntry>(sqlHelper.getFeedsByNameMapping().values());
         adapter = new FeedsAdapter(this, feeds);
         ListView list = (ListView) findViewById(R.id.feedsList);
         list.setAdapter(adapter);

@@ -17,7 +17,6 @@ import com.polarnick.rss.Feed;
 import com.polarnick.rss.FeedEntry;
 
 import java.lang.ref.WeakReference;
-import java.util.Map;
 
 /**
  * Date: 16.09.13
@@ -59,8 +58,7 @@ public class FeedActivity extends ListActivity implements UberResultReceiver.Rec
     }
 
     private void initFeedURLByDefaultValue() {
-        Map<String, FeedsSQLiteOpenHelper.FeedEntry> feeds = sqlHelper.getEntries();
-        for (FeedsSQLiteOpenHelper.FeedEntry feed : feeds.values()) {
+        for (FeedsSQLiteOpenHelper.FeedEntry feed : sqlHelper.getFeedsList()) {
             if (feed.isDefault()) {
                 currentFeedURL = feed.getUrl();
             }
@@ -79,7 +77,7 @@ public class FeedActivity extends ListActivity implements UberResultReceiver.Rec
     private void updateMenuFeedList() {
         menu.clear();
         menu.add(getResources().getString(R.string.MANAGE_FEEDS)).setIcon(android.R.drawable.ic_menu_preferences);
-        for (FeedsSQLiteOpenHelper.FeedEntry feed : sqlHelper.getEntries().values()) {
+        for (FeedsSQLiteOpenHelper.FeedEntry feed : sqlHelper.getFeedsList()) {
             menu.add(feed.getName());
         }
     }
@@ -90,7 +88,7 @@ public class FeedActivity extends ListActivity implements UberResultReceiver.Rec
             Intent intent = new Intent(FeedActivity.this, FeedsManagmentActivity.class);
             startActivity(intent);
         } else {
-            currentFeedURL = sqlHelper.getEntries().get(item.getTitle().toString()).getUrl();
+            currentFeedURL = sqlHelper.getFeedsByNameMapping().get(item.getTitle().toString()).getUrl();
             loadFeed();
         }
         return true;

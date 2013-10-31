@@ -7,10 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import com.google.common.base.Preconditions;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Date: 29.10.13
@@ -90,11 +87,11 @@ public class FeedsSQLiteOpenHelper extends SQLiteOpenHelper {
      * @return inserted feed. It can differs from given feed - it will be default, if there were no feeds.
      */
     public synchronized FeedEntry insertEntry(FeedEntry entry) {
-        if (getEntries().size() == 0) {
+        if (getFeedsByNameMapping().size() == 0) {
             entry = new FeedEntry(entry.getName(), entry.getUrl(), true);
         }
         database.execSQL(INSERT_OR_REPLACE_QUERY, new Object[]{entry.getName(), entry.getUrl(), Boolean.toString(entry.isDefault())});
-        getEntries().put(entry.getName(), entry);
+        getFeedsByNameMapping().put(entry.getName(), entry);
         return entry;
     }
 
@@ -106,7 +103,7 @@ public class FeedsSQLiteOpenHelper extends SQLiteOpenHelper {
         FeedEntry changedFeed = null;
         if (entry.isDefault()) {
             FeedEntry anyFeed = null;
-            for (FeedEntry feed : getEntries().values()) {
+            for (FeedEntry feed : getFeedsByNameMapping().values()) {
                 if (!feed.getUrl().equals(entry.getUrl())) {
                     anyFeed = feed;
                 }
@@ -118,11 +115,15 @@ public class FeedsSQLiteOpenHelper extends SQLiteOpenHelper {
             }
         }
         database.delete(FEEDS_TABLE, FEEDS_NAME_COLUMN + " = '" + entry.getName()+"'", null);
-        getEntries().remove(entry.getName());
+        getFeedsByNameMapping().remove(entry.getName());
         return changedFeed;
     }
 
-    public synchronized Map<String, FeedEntry> getEntries() {
+    public synchronized List<FeedEntry> getFeedsList() {
+        return new ArrayList<FeedEntry>(getFeedsByNameMapping().values());
+    }
+
+    public synchronized Map<String, FeedEntry> getFeedsByNameMapping() {
         if (entryByName == null) {
             entryByName = new HashMap<String, FeedEntry>();
             Cursor cursor = database.query(FEEDS_TABLE, allColumns, null, null, null, null, null);

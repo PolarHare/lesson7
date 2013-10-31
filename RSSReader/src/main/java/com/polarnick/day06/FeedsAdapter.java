@@ -15,12 +15,17 @@ import java.util.List;
  * @author Nickolay Polyarniy aka PolarNick
  */
 public class FeedsAdapter extends ArrayAdapter<FeedsSQLiteOpenHelper.FeedEntry> {
-    private FeedsSQLiteOpenHelper sqlHelper = FeedsSQLiteOpenHelper.getInstance(null);
-    private List<FeedsSQLiteOpenHelper.FeedEntry> feeds;
+    private final FeedsSQLiteOpenHelper sqlHelper;
+    private final List<FeedsSQLiteOpenHelper.FeedEntry> feeds;
+    private final View.OnClickListener setDefaultFeedButtonListener;
+    private final View.OnClickListener deleteFeedButtonListener;
 
     public FeedsAdapter(Context context, List<FeedsSQLiteOpenHelper.FeedEntry> feeds) {
         super(context, R.layout.feed_item, feeds);
+        this.sqlHelper = FeedsSQLiteOpenHelper.getInstance(null);
         this.feeds = feeds;
+        this.setDefaultFeedButtonListener = new SetDefaultButtonlistener();
+        this.deleteFeedButtonListener = new DeleteFeedButtonListener();
     }
 
     @Override
@@ -33,26 +38,23 @@ public class FeedsAdapter extends ArrayAdapter<FeedsSQLiteOpenHelper.FeedEntry> 
         ((TextView) view.findViewById(R.id.feedNameText)).setText(feed.getName());
         ((TextView) view.findViewById(R.id.feedUrlText)).setText(feed.getUrl());
         view.findViewById(R.id.setDefaultFeedButton).setEnabled(!feed.isDefault());
-        view.findViewById(R.id.setDefaultFeedButton).setOnClickListener(new SetDefaultButtonlistener(feed));
-        view.findViewById(R.id.deleteFeedButton).setOnClickListener(new DeleteFeedButtonListener(feed));
+        view.findViewById(R.id.setDefaultFeedButton).setTag(feed);
+        view.findViewById(R.id.setDefaultFeedButton).setOnClickListener(setDefaultFeedButtonListener);
+        view.findViewById(R.id.deleteFeedButton).setTag(feed);
+        view.findViewById(R.id.deleteFeedButton).setOnClickListener(deleteFeedButtonListener);
 
         return view;
     }
 
     private class SetDefaultButtonlistener implements View.OnClickListener {
 
-        private final FeedsSQLiteOpenHelper.FeedEntry feed;
-
-        private SetDefaultButtonlistener(FeedsSQLiteOpenHelper.FeedEntry feed) {
-            this.feed = feed;
-        }
-
         @Override
         public void onClick(View v) {
-            for (FeedsSQLiteOpenHelper.FeedEntry feed : feeds) {
-                if (feed.isDefault()) {
-                    feed.setDefault(false);
-                    sqlHelper.insertEntry(feed);
+            FeedsSQLiteOpenHelper.FeedEntry feed = (FeedsSQLiteOpenHelper.FeedEntry) v.getTag();
+            for (FeedsSQLiteOpenHelper.FeedEntry otherFeed : feeds) {
+                if (otherFeed.isDefault()) {
+                    otherFeed.setDefault(false);
+                    sqlHelper.insertEntry(otherFeed);
                 }
             }
             feed.setDefault(true);
@@ -63,19 +65,14 @@ public class FeedsAdapter extends ArrayAdapter<FeedsSQLiteOpenHelper.FeedEntry> 
 
     private class DeleteFeedButtonListener implements View.OnClickListener {
 
-        private final FeedsSQLiteOpenHelper.FeedEntry feed;
-
-        private DeleteFeedButtonListener(FeedsSQLiteOpenHelper.FeedEntry feed) {
-            this.feed = feed;
-        }
-
         @Override
         public void onClick(View v) {
+            FeedsSQLiteOpenHelper.FeedEntry feed = (FeedsSQLiteOpenHelper.FeedEntry) v.getTag();
             FeedsSQLiteOpenHelper.FeedEntry newDefault = sqlHelper.deleteEntry(feed);
             if (newDefault != null) {
-                for (FeedsSQLiteOpenHelper.FeedEntry feed : feeds) {
-                    if (feed.getName().equals(newDefault.getName())) {
-                        feed.setDefault(true);
+                for (FeedsSQLiteOpenHelper.FeedEntry otherFeed : feeds) {
+                    if (otherFeed.getName().equals(newDefault.getName())) {
+                        otherFeed.setDefault(true);
                     }
                 }
             }
