@@ -9,7 +9,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/deleteFeedButton"
-                android:src="@drawable/ic_menu_delete"/>
+                android:src="@android:drawable/ic_menu_delete"/>
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

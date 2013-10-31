@@ -78,7 +78,7 @@ public class FeedActivity extends ListActivity implements UberResultReceiver.Rec
 
     private void updateMenuFeedList() {
         menu.clear();
-        menu.add(getResources().getString(R.string.MANAGE_FEEDS));
+        menu.add(getResources().getString(R.string.MANAGE_FEEDS)).setIcon(android.R.drawable.ic_menu_preferences);
         for (FeedsSQLiteOpenHelper.FeedEntry feed : sqlHelper.getEntries().values()) {
             menu.add(feed.getName());
         }
